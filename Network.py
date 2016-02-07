@@ -4,6 +4,7 @@ import socket
 import json
 from Model import Constants
 
+
 class Network():
     def __init__(self, ip, port, token, message_handler):
         self.receive_flag = True
