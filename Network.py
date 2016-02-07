@@ -1,8 +1,10 @@
+import time
+
 __author__ = 'pezzati'
 
 import socket
 import json
-from Model import Constants
+from Model import *
 
 
 class Network():
