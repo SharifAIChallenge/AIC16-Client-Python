@@ -18,9 +18,8 @@ class Graph:
 class Node:
     def __init__(self, index):
         self.__index = index
-        self.__index
-        self.__owner
-        self.__army_count
+        self.__owner = -1
+        self.__army_count = 0
         self.__neighbours = []
 
     def get_neighbours(self):
@@ -49,14 +48,14 @@ class Node:
 
 
 class World:
-    def __init__(self, sender):
+    def __init__(self, queue):
         self.__turn_start_time = 0
         self.__turn_time_out = 400
-        self.__sender = sender
-        self.__turn
-        self.__my_id
-        self.__map
-        self.__nodes
+        self.__queue = queue
+        self.__turn = 0
+        self.__my_id = 0
+        self.__map = 0
+        self.__nodes = [[], [], []]
 
     def handle_init_message(self, msg):
         self.__turn_time_out = int(msg[Constants.KEY_ARGS][0])
@@ -65,17 +64,17 @@ class World:
         adj_list_init = msg[Constants.KEY_ARGS][2]
         nodes = []
 
-        for node in adj_list_init:
-            nodes.append(Node(node))
+        for i in range(len(adj_list_init)):
+            nodes.append(Node(i))
 
-        for i in range(0, adj_list_init.size()):
-            neighbours_int = adj_list_init[i]
+        for i in range(len(adj_list_init)):
+            #neighbours_int = adj_list_init[i]
             neighbours = []
-            for j in range(0, adj_list_init[i].size):
-                neighbours[j] = nodes[int(neighbours_int[j])]
+            for j in adj_list_init[i]:
+                neighbours.append(nodes[j])
             nodes[i].set_neighbours(neighbours)
         graph_diff = msg[Constants.KEY_ARGS][3]
-        for i in range(0, graph_diff.size()):
+        for i in range(len(graph_diff)):
             node_diff = graph_diff[i]
             node = int(node_diff[0])
             owner = int(node_diff[1])
@@ -90,7 +89,7 @@ class World:
         self.__turn = int(msg[Constants.KEY_ARGS][0])
 
         graph_diff = msg[Constants.KEY_ARGS][1]
-        for i in range(0, graph_diff.size()):
+        for i in range(len(graph_diff)):
             node_diff = graph_diff[i]
             node_index = int(node_diff[0])
             self.__map.get_node(node_index).set_owner(int(node_diff[1]))
@@ -99,16 +98,13 @@ class World:
 
     def __update_nodes_list(self):
         # dummies! :))
-        nodes_list = [3]
-        nodes_list[0] = []
-        nodes_list[1] = []
-        nodes_list[2] = []
+        nodes_list = [[],[],[]]
         for n in self.__map.get_nodes():
             nodes_list[n.get_owner() + 1].append(n)
 
-        for i in range(0, self.__nodes):
+        for i in range(len(self.__nodes)):
             self.__nodes[i] = nodes_list[i]
-            print(nodes_list[i], file=sys.stderr)
+            #print(nodes_list[i], file=sys.stderr)
 
     def get_turn_time_passed(self):
         return int(round(time.time()*1000)) - self.__turn_start_time
@@ -138,7 +134,7 @@ class World:
         return self.__turn_time_out
 
     def move_army(self, src, dst, count):
-        self.__sender.accept(Event.EVENT, Event('m', [src, dst, count]))
+        self.__queue.put(Event('m', [src, dst, count]))
 
 
 class Event:
@@ -151,11 +147,11 @@ class Event:
     def add_arg(self, arg):
         self.args.append(arg)
 
-    def to_message(self):
-        return {
-            'name': Event.EVENT,
-            'args': [{'type': self.type, 'args': self.args}]
-        }
+    #def to_message(self):
+    #    return {
+    #        'name': Event.EVENT,
+    #        'args': [{'type': self.type, 'args': self.args}]
+    #    }
 
 
 class Constants:

@@ -1,9 +1,10 @@
 import os
+import struct
 
 __author__ = 'pezzati'
 
 from Network import *
-from Model import Constants
+from Model import *
 from AI import AI
 import json
 from threading import Thread
@@ -17,10 +18,10 @@ class Controller():
         self.conf = {}
         self.network = None
         self.queue = Queue()
-        self.model = Model(self.queue)
+        self.world = World(self.queue)
         self.client = AI()
         self.argNames = ["AICHostIP", "AICHostPort", "AICToken", "AICRetryDelay"]
-        self.argDefaults = ["127.0.0.1", "7099", "00000000000000000000000000000000", "1000"]
+        self.argDefaults = ["127.0.0.1", 7099, "00000000000000000000000000000000", "1000"]
 
     def start(self):
         self.read_settings()
@@ -35,10 +36,11 @@ class Controller():
                 event = self.queue.get()
                 self.queue.task_done()
                 message = {
-                    Constants.KEY_NAME: Constants.MESSAGE_TYPE_EVENT,
-                    Constants.KEY_ARGS: [event]
+                    'name': Event.EVENT,
+                    'args': [{'type': event.type, 'args': event.args}]
                 }
                 self.network.send(message)
+                print('mosalmun')
         Thread(target=run, daemon=True).start()
 
     def terminate(self):
@@ -56,9 +58,9 @@ class Controller():
 
     def handle_message(self, message):
         if message[Constants.KEY_NAME] == Constants.MESSAGE_TYPE_INIT:
-            self.model.handle_init_message(message)
+            self.world.handle_init_message(message)
         elif message[Constants.KEY_NAME] == Constants.MESSAGE_TYPE_TURN:
-            self.model.handle_turn_message(message)
+            self.world.handle_turn_message(message)
             self.do_turn()
         elif message[Constants.KEY_NAME] == Constants.MESSAGE_TYPE_SHUTDOWN:
             self.terminate()
@@ -66,7 +68,7 @@ class Controller():
     def do_turn(self):
 
         def run():
-            self.client.do_turn(self.model.world)
+            self.client.do_turn(self.world)
 
         Thread(target=run, daemon=True).start()
 
