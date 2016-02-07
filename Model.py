@@ -155,7 +155,13 @@ class Event:
 
 class Constants:
     KEY_ARGS = "args"
+    KEY_NAME = "name"
 
     CONFIG_KEY_IP = "ip"
     CONFIG_KEY_PORT = "port"
     CONFIG_KEY_TOKEN = "token"
+
+    MESSAGE_TYPE_EVENT = "event"
+    MESSAGE_TYPE_INIT = "init"
+    MESSAGE_TYPE_SHUTDOWN = "shutdown"
+    MESSAGE_TYPE_TURN = "turn"
