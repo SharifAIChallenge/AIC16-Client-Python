@@ -4,9 +4,7 @@ import struct
 __author__ = 'pezzati'
 
 from Network import *
-from Model import *
 from AI import AI
-import json
 from threading import Thread
 from queue import Queue
 
@@ -40,7 +38,6 @@ class Controller():
                     'args': [{'type': event.type, 'args': event.args}]
                 }
                 self.network.send(message)
-                print('mosalmun')
         Thread(target=run, daemon=True).start()
 
     def terminate(self):
