@@ -3,7 +3,7 @@ __author__ = 'AmirHS'
 
 class AI():
     def do_turn(self, world):
-        my_nodes = world.get_my_nodes()
+        my_nodes = world.my_nodes
         for n in my_nodes:
             for nn in n.neighbours:
                 if nn.owner != world.my_id:

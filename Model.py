@@ -51,9 +51,12 @@ class World:
         self.turn_start_time = 0
         self.turn_time_out = 400
         self.queue = queue
-        self.turn = 0
+        self.turn_number = 0
         self.my_id = 0
         self.map = 0
+        self.my_nodes = []
+        self.opponent_nodes = []
+        self.free_nodes = []
         self.nodes = [[], [], []]
 
     def handle_init_message(self, msg):
@@ -85,7 +88,7 @@ class World:
 
     def handle_turn_message(self, msg):
         self.turn_start_time = int(round(time.time()*1000))
-        self.turn = int(msg[Constants.KEY_ARGS][0])
+        self.turn_number = int(msg[Constants.KEY_ARGS][0])
 
         graph_diff = msg[Constants.KEY_ARGS][1]
         for i in range(len(graph_diff)):
@@ -101,9 +104,12 @@ class World:
         for n in self.map.nodes:
             nodes_list[n.owner + 1].append(n)
 
-        for i in range(len(self.nodes)):
-            self.nodes[i] = nodes_list[i]
+        #for i in range(len(self.nodes)):
+        #    self.nodes[i] = nodes_list[i]
             #print(nodes_list[i], file=sys.stderr)
+        self.my_nodes = nodes_list[self.my_id + 1]
+        self.opponent_nodes = nodes_list[2 - self.my_id]
+        self.free_nodes = nodes_list[0]
 
     def get_turn_time_passed(self):
         return int(round(time.time()*1000)) - self.turn_start_time
@@ -116,16 +122,16 @@ class World:
     #
     #def get_map(self):
     #    return self.__map
-
-    def get_my_nodes(self):
-        return self.nodes[self.my_id + 1]
-
-    def get_opponent_nodes(self):
-        return self.nodes[2 - self.my_id]
-
-    def get_free_nodes(self):
-        return self.nodes[0]
-
+    #
+    #def get_my_nodes(self):
+    #    return self.nodes[self.my_id + 1]
+    #
+    #def get_opponent_nodes(self):
+    #    return self.nodes[2 - self.my_id]
+    #
+    #def get_free_nodes(self):
+    #    return self.nodes[0]
+    #
     #def get_turn_number(self):
     #    return self.__turn
     #
