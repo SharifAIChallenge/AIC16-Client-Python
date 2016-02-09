@@ -139,7 +139,10 @@ class World:
     #    return self.__turn_time_out
 
     def move_army(self, src, dst, count):
-        self.queue.put(Event('m', [src, dst, count]))
+        if isinstance(src, Node):
+            self.queue.put(Event('m', [src.index, dst.index, count]))
+        else:
+            self.queue.put(Event('m', [src, dst, count]))
 
 
 class Event:
