@@ -21,18 +21,6 @@ class Node:
         self.army_count = 0
         self.neighbours = []
 
-    #def get_neighbours(self):
-    #    return self.__neighbours
-    #
-    #def get_index(self):
-    #    return self.__index
-    #
-    #def get_owner(self):
-    #    return self.__owner
-    #
-    #def get_army_count(self):
-    #    return self.__army_count
-
     def set_neighbours(self, neighbours):
         self.neighbours = neighbours
 
@@ -48,8 +36,15 @@ class Node:
 
 class World:
     def __init__(self, queue):
-        self.turn_start_time = 0
-        self.turn_time_out = 400
+        self.turn_start_time = None
+        self.turn_timeout = None
+        self.escape = None
+        self.node_bonus = None
+        self.edge_bonus = None
+        self.low_army_bound = None
+        self.medium_army_bount = None
+        self.medium_casualty_coefficient = None
+        self.low_casualty_coefficient = None
         self.queue = queue
         self.turn_number = 0
         self.my_id = 0
@@ -60,7 +55,16 @@ class World:
         self.nodes = [[], [], []]
 
     def handle_init_message(self, msg):
-        self.turn_time_out = int(msg[Constants.KEY_ARGS][0])
+        constants = msg[Constants.KEY_ARGS][0]
+        self.turn_timeout = int(constants['turnTimeout'])
+        self.escape = int(constants['escape'])
+        self.node_bonus = int(constants['nodeBonus'])
+        self.edge_bonus = int(constants['edgeBonus'])
+        self.low_army_bound = int(constants['firstlvl'])
+        self.medium_army_bount = int(constants['secondlvl'])
+        self.medium_casualty_coefficient = float(constants['lossRate1'])
+        self.low_casualty_coefficient = float(constants['lossRate2'])
+
         self.my_id = int(msg[Constants.KEY_ARGS][1])
 
         adj_list_init = msg[Constants.KEY_ARGS][2]
@@ -115,28 +119,7 @@ class World:
         return int(round(time.time()*1000)) - self.turn_start_time
 
     def get_turn_remaining_time(self):
-        return self.turn_time_out - self.get_turn_time_passed()
-
-    #def get_my_id(self):
-    #    return self.__my_id
-    #
-    #def get_map(self):
-    #    return self.__map
-    #
-    #def get_my_nodes(self):
-    #    return self.nodes[self.my_id + 1]
-    #
-    #def get_opponent_nodes(self):
-    #    return self.nodes[2 - self.my_id]
-    #
-    #def get_free_nodes(self):
-    #    return self.nodes[0]
-    #
-    #def get_turn_number(self):
-    #    return self.__turn
-    #
-    #def get_total_turn_time(self):
-    #    return self.__turn_time_out
+        return self.turn_timeout - self.get_turn_time_passed()
 
     def move_army(self, src, dst, count):
         if isinstance(src, Node):
