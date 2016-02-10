@@ -6,13 +6,6 @@ import time
 class Graph:
     def __init__(self, nodes):
         self.nodes = nodes
-    #
-    #def get_nodes(self):
-    #    return self.__nodes
-    #
-    #def get_node(self, i):
-    #    return self.__nodes[i]
-
 
 class Node:
     def __init__(self, index):
@@ -36,6 +29,7 @@ class Node:
 
 class World:
     def __init__(self, queue):
+        self.total_turns = None
         self.turn_start_time = None
         self.turn_timeout = None
         self.escape = None
@@ -56,6 +50,7 @@ class World:
 
     def handle_init_message(self, msg):
         constants = msg[Constants.KEY_ARGS][0]
+        self.total_turns = int(constants['turns'])
         self.turn_timeout = int(constants['turnTimeout'])
         self.escape = int(constants['escape'])
         self.node_bonus = int(constants['nodeBonus'])
