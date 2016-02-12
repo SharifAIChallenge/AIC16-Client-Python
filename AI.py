@@ -1,10 +1,17 @@
+from random import randint
+
 __author__ = 'AmirHS'
 
 
 class AI():
     def do_turn(self, world):
+        # fill this method, we've presented a stupid AI for example!
         my_nodes = world.my_nodes
-        for n in my_nodes:
-            for nn in n.neighbours:
-                if nn.owner != world.my_id:
-                    world.move_army(n.index, nn.index, int(n.army_count / 2))
+        for source in my_nodes:
+            # get neighbours
+            neighbours = source.neighbours
+            if len(neighbours) > 0:
+                # select a random neighbour
+                destination = neighbours[randint(0, len(neighbours) - 1)]
+                # move half of the source's army to the neighbour node
+                world.move_army(source, destination, int(source.army_count/2))
