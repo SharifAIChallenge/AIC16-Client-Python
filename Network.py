@@ -1,9 +1,8 @@
-import time
-
 __author__ = 'pezzati'
 
 import socket
 import json
+
 from Model import *
 
 
@@ -54,7 +53,7 @@ class Network():
             self.result += self.s.recv(1024)
             if b'\x00' in self.result:
                 ans = json.loads(self.result[:self.result.index(b'\x00')].decode('UTF-8'))
-                self.result = self.result[self.result.index(b'\x00')+1:]
+                self.result = self.result[self.result.index(b'\x00') + 1:]
                 return ans
 
     def start_receiving(self):
