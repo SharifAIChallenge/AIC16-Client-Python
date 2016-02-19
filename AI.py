@@ -3,8 +3,5 @@ __author__ = 'AmirHS'
 
 class AI():
     def do_turn(self, world):
-        my_nodes = world.my_nodes
-        for n in my_nodes:
-            for nn in n.neighbours:
-                if nn.owner != world.my_id:
-                    world.move_army(n.index, nn.index, int(n.army_count / 2))
+    	world.move_army(1, 2, 5)
+    	world.move_army(0, 2, 2)
